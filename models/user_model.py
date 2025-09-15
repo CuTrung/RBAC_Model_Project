@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String
 from database import Base
 from pydantic import BaseModel
 
-# ORM model (dùng cho DB)
 class User(Base):
     __tablename__ = "users"
 
@@ -10,8 +9,6 @@ class User(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
 
-
-# Pydantic schema (dùng cho request/response)
 class UserCreate(BaseModel):
     name: str
     email: str
