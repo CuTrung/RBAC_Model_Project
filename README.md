@@ -9,4 +9,5 @@ py -m fastapi dev main.py
 # Open API
 http://127.0.0.1:8000/docs
 
+# Diagram
 ![Diagram](./assets/diagram.png)
