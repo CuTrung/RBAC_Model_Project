@@ -1,0 +1,6 @@
+# Install
+py -m pip install pydantic
+py -m pip install sqlalchemy
+
+# Run
+py -m fastapi dev main.py
