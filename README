@@ -10,4 +10,5 @@ py -m fastapi dev main.py
 http://127.0.0.1:8000/docs
 
 # Diagram
-![Logo](./assets/diagram.png)
+<img src="./assets/diagram.png" alt="Diagram" width="200"/>
+![Diagram](./assets/diagram.png)
