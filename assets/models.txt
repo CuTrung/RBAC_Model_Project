@@ -1,0 +1,46 @@
+User {
+  user_id;
+  username;
+  email;
+  passworđ;
+}
+
+Group {
+  group_id;
+  group_name;
+  description;
+}
+
+UserGroup {
+  user_id;
+  group_id;
+}
+
+Role {
+  role_id;
+  role_name;
+  description;
+}
+
+GroupRole {
+  group_id;
+  role_id;
+}
+
+Permission {
+  permission_id;
+  permission_name;
+  description;
+  resource_id;
+}
+
+RolePermission {
+  role_id;
+  permission_id;
+}
+
+Resource {
+  resource_id;
+  resource_name;
+  description;
+}
