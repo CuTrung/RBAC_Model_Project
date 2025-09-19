@@ -1,16 +1,33 @@
 # Install
+
+```
 py -m pip install "fastapi[standard]"
+```
+
+```
 py -m pip install pydantic
+```
+
+```
 py -m pip install sqlalchemy
+```
 
 # Run
+
+```
 py -m fastapi dev main.py
+```
 
 # Open API
+
+```
 http://127.0.0.1:8000/docs
+```
 
 # Debug
+
 ![Logo](./assets/debug.png)
 
 # Diagram
-![Logo](./assets/diagram.png)
+
+![Diagram](./assets/diagram.png)
