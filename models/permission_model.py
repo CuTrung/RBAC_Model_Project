@@ -24,7 +24,7 @@ class PermissionCreate(BaseModel):
     resource_id: str
 
 class PermissionResponse(BaseModel):
-    permission_id: int
+    permission_id: str
     permission_name: str
     description: str
     resource_id: str

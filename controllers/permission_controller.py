@@ -13,7 +13,7 @@ def get_permissions(db: Session = Depends(get_db)):
     return permissions
 
 @router.get("/{permission_id}", response_model=PermissionResponse)
-def get_permission(permission_id: int, db: Session = Depends(get_db)):
+def get_permission(permission_id: str, db: Session = Depends(get_db)):
     permission = permission_service.get_permission(db, permission_id)
     if permission:
         return permission
@@ -24,15 +24,15 @@ def create_permission(permission: PermissionCreate, db: Session = Depends(get_db
     return permission_service.create_permission(db, permission)
 
 @router.put("/{permission_id}", response_model=PermissionResponse)
-def update_permission(permission_id: int, permission: PermissionCreate, db: Session = Depends(get_db)):
+def update_permission(permission_id: str, permission: PermissionCreate, db: Session = Depends(get_db)):
     updated = permission_service.update_permission(db, permission_id, permission)
     if updated:
         return updated
     return permission_view.error_response("Permission not found", 404)
 
 @router.delete("/{permission_id}")
-def delete_permission(permission_id: int, db: Session = Depends(get_db)):
+def delete_permission(permission_id: str, db: Session = Depends(get_db)):
     deleted = permission_service.delete_permission(db, permission_id)
     if deleted:
-        return permission_view.success_response({"id": deleted.id}, "Permission deleted")
+        return permission_view.success_response({"permission_id": deleted.permission_id}, "Permission deleted")
     return permission_view.error_response("Permission not found", 404)
