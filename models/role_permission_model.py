@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, ForeignKey
 from database import Base
 from pydantic import BaseModel
 from models.permission_model import PermissionsOfRole
@@ -7,8 +7,8 @@ from models.permission_model import PermissionsOfRole
 class RolePermission(Base):
     __tablename__ = "rolePermissions"
 
-    role_id = Column(String)
-    permission_id = Column(String)
+    role_id = Column(String, ForeignKey("roles.role_id"), primary_key=True)
+    permission_id = Column(String, ForeignKey("permissions.permission_id"), primary_key=True)
 
 class GetPermissionsOfRoleResponse(BaseModel):
     permissions: list[PermissionsOfRole]

@@ -31,3 +31,10 @@ class PermissionResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+class PermissionsOfRole(BaseModel):
+    permission_id: str
+    permission_name: str
+
+    class Config:
+        orm_mode = True

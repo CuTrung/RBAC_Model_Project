@@ -36,3 +36,10 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     if deleted:
         return user_view.success_response({"user_id": deleted.user_id}, "User deleted")
     return user_view.error_response("User not found", 404)
+
+@router.get("/{user_id}/permissions", response_model=UserResponse)
+def get_permissions_of_user(user_id: int, db: Session = Depends(get_db)):
+    permissionsOfUser = user_service.get_permissions_of_user(db, user_id)
+    if permissionsOfUser:
+        return permissionsOfUser
+    return user_view.error_response("User not found", 404)
