@@ -1,11 +1,14 @@
 from sqlalchemy.orm import Session
 from models.user_model import User, UserCreate
 
+
 def get_users(db: Session):
     return db.query(User).all()
 
+
 def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+    return db.query(User).filter(User.user_id == user_id).first()
+
 
 def create_user(db: Session, user: UserCreate):
     new_user = User(name=user.name, email=user.email)
@@ -14,8 +17,9 @@ def create_user(db: Session, user: UserCreate):
     db.refresh(new_user)
     return new_user
 
+
 def update_user(db: Session, user_id: int, updated_user: UserCreate):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.user_id == user_id).first()
     if user:
         user.name = updated_user.name
         user.email = updated_user.email
@@ -23,8 +27,9 @@ def update_user(db: Session, user_id: int, updated_user: UserCreate):
         db.refresh(user)
     return user
 
+
 def delete_user(db: Session, user_id: int):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.user_id == user_id).first()
     if user:
         db.delete(user)
         db.commit()
