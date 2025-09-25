@@ -38,5 +38,5 @@ def update_group(group_id: int, group: GroupCreate, db: Session = Depends(get_db
 def delete_group(group_id: int, db: Session = Depends(get_db)):
     deleted = group_service.delete_group(db, group_id)
     if deleted:
-        return group_view.success_response({"id": deleted.id}, "Group deleted")
+        return group_view.success_response({"group_id": deleted.group_id}, "Group deleted")
     return group_view.error_response("Group not found", 404)

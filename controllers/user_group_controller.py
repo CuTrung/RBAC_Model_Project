@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from sqlalchemy.orm import Session
 from models.user_group_model import UserGroupCreate, UserGroupResponse
 from services import user_group_service
@@ -30,5 +30,18 @@ def create_user_group(user_group: UserGroupCreate, db: Session = Depends(get_db)
 def delete_user_group(user_group_id: int, db: Session = Depends(get_db)):
     deleted = user_group_service.delete_user_group(db, user_group_id)
     if deleted:
-        return user_group_view.success_response({"id": deleted.id}, "UserGroup deleted")
+        return user_group_view.success_response({"user_group_id": deleted.user_group_id}, "UserGroup deleted")
     return user_group_view.error_response("UserGroup not found", 404)
+
+
+@router.post("/assign", response_model=list[UserGroupResponse])
+def assign_users_for_group(
+    group_id: int = Body(..., embed=True),
+    user_ids: list[int] = Body(..., embed=True),
+    db: Session = Depends(get_db),
+):
+    result = user_group_service.assign_users_for_group(db, group_id, user_ids)
+    return user_group_view.success_response(
+        [UserGroupResponse.from_orm(r).model_dump() for r in result],
+        "Assigned users for group successfully",
+    )

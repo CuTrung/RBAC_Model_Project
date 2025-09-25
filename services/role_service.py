@@ -7,7 +7,7 @@ def get_roles(db: Session):
 
 
 def get_role(db: Session, role_id: int):
-    return db.query(Role).filter(Role.id == role_id).first()
+    return db.query(Role).filter(Role.role_id == role_id).first()
 
 
 def create_role(db: Session, role: RoleCreate):
@@ -19,7 +19,7 @@ def create_role(db: Session, role: RoleCreate):
 
 
 def update_role(db: Session, role_id: int, updated_role: RoleCreate):
-    role = db.query(Role).filter(Role.id == role_id).first()
+    role = db.query(Role).filter(Role.role_id == role_id).first()
     if role:
         role.role_name = updated_role.role_name
         role.description = updated_role.description
@@ -29,7 +29,7 @@ def update_role(db: Session, role_id: int, updated_role: RoleCreate):
 
 
 def delete_role(db: Session, role_id: int):
-    role = db.query(Role).filter(Role.id == role_id).first()
+    role = db.query(Role).filter(Role.role_id == role_id).first()
     if role:
         db.delete(role)
         db.commit()

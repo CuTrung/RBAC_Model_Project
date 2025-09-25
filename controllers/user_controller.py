@@ -34,5 +34,5 @@ def update_user(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     deleted = user_service.delete_user(db, user_id)
     if deleted:
-        return user_view.success_response({"id": deleted.id}, "User deleted")
+        return user_view.success_response({"user_id": deleted.user_id}, "User deleted")
     return user_view.error_response("User not found", 404)

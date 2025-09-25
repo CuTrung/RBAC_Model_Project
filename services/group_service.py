@@ -7,7 +7,7 @@ def get_groups(db: Session):
 
 
 def get_group(db: Session, group_id: int):
-    return db.query(Group).filter(Group.id == group_id).first()
+    return db.query(Group).filter(Group.group_id == group_id).first()
 
 
 def create_group(db: Session, group: GroupCreate):
@@ -19,7 +19,7 @@ def create_group(db: Session, group: GroupCreate):
 
 
 def update_group(db: Session, group_id: int, updated_group: GroupCreate):
-    group = db.query(Group).filter(Group.id == group_id).first()
+    group = db.query(Group).filter(Group.group_id == group_id).first()
     if group:
         group.group_name = updated_group.group_name
         group.description = updated_group.description
@@ -29,7 +29,7 @@ def update_group(db: Session, group_id: int, updated_group: GroupCreate):
 
 
 def delete_group(db: Session, group_id: int):
-    group = db.query(Group).filter(Group.id == group_id).first()
+    group = db.query(Group).filter(Group.group_id == group_id).first()
     if group:
         db.delete(group)
         db.commit()

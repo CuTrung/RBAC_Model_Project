@@ -6,9 +6,9 @@ from pydantic import BaseModel
 class UserGroup(Base):
     __tablename__ = "user_groups"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
+    user_group_id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    group_id = Column(Integer, ForeignKey("groups.group_id"), nullable=False)
 
 
 class UserGroupCreate(BaseModel):
@@ -17,9 +17,10 @@ class UserGroupCreate(BaseModel):
 
 
 class UserGroupResponse(BaseModel):
-    id: int
+    user_group_id: int
     user_id: int
     group_id: int
 
     class Config:
         orm_mode = True
+        from_attributes = True

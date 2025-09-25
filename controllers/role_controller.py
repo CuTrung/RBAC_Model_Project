@@ -38,5 +38,5 @@ def update_role(role_id: int, role: RoleCreate, db: Session = Depends(get_db)):
 def delete_role(role_id: int, db: Session = Depends(get_db)):
     deleted = role_service.delete_role(db, role_id)
     if deleted:
-        return role_view.success_response({"id": deleted.id}, "Role deleted")
+        return role_view.success_response({"role_id": deleted.role_id}, "Role deleted")
     return role_view.error_response("Role not found", 404)

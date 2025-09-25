@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class Group(Base):
     __tablename__ = "groups"
 
-    id = Column(Integer, primary_key=True, index=True)
+    group_id = Column(Integer, primary_key=True, index=True)
     group_name = Column(String, unique=True, index=True)
     description = Column(String)
 
@@ -17,9 +17,10 @@ class GroupCreate(BaseModel):
 
 
 class GroupResponse(BaseModel):
-    id: int
+    group_id: int
     group_name: str
     description: str
 
     class Config:
         orm_mode = True
+        from_attributes = True
