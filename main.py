@@ -7,6 +7,7 @@ from controllers.group_role_controller import router as group_role_router
 from controllers.permission_controller import router as permission_router
 from controllers.resource_controller import router as resource_router
 
+
 from database import Base, engine
 
 Base.metadata.create_all(bind=engine)

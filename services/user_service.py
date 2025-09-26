@@ -26,7 +26,11 @@ def update_user(db: Session, user_id: int, updated_user: UserCreate):
     if user:
         user.username = updated_user.username
         user.email = updated_user.email
-        user.password = updated_user.password
+        # Hash password trước khi lưu
+        from passlib.context import CryptContext
+
+        pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        user.password = pwd_context.hash(updated_user.password)
         db.commit()
         db.refresh(user)
     return user
