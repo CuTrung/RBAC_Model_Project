@@ -17,9 +17,10 @@ class GroupRoleCreate(BaseModel):
 
 
 class GroupRoleResponse(BaseModel):
-    group_role_id: int
     group_id: int
+    group_name: str = None
     role_id: int
+    role_name: str = None
 
     class Config:
         orm_mode = True
