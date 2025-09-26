@@ -7,19 +7,22 @@ class User(Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
+    password = Column(String, nullable=False)
 
 
 class UserCreate(BaseModel):
-    name: str
+    username: str
     email: str
+    password: str
 
 
 class UserResponse(BaseModel):
     user_id: int
-    name: str
+    username: str
     email: str
+    password: str
 
     class Config:
         orm_mode = True

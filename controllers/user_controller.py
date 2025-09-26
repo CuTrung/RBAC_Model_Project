@@ -7,10 +7,12 @@ from database import get_db
 
 router = APIRouter()
 
+
 @router.get("/", response_model=list[UserResponse])
 def get_users(db: Session = Depends(get_db)):
     users = user_service.get_users(db)
     return users
+
 
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: int, db: Session = Depends(get_db)):
@@ -19,9 +21,11 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
         return user
     return user_view.error_response("User not found", 404)
 
+
 @router.post("/", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return user_service.create_user(db, user)
+
 
 @router.put("/{user_id}", response_model=UserResponse)
 def update_user(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
@@ -29,6 +33,7 @@ def update_user(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
     if updated:
         return updated
     return user_view.error_response("User not found", 404)
+
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):

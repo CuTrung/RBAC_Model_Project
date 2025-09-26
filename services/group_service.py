@@ -7,7 +7,10 @@ def get_groups(db: Session):
 
 
 def get_group(db: Session, group_id: int):
-    return db.query(Group).filter(Group.group_id == group_id).first()
+    group = db.query(Group).filter(Group.group_id == group_id).first()
+    if not group:
+        raise ValueError("Không tìm thấy nhóm")
+    return group
 
 
 def create_group(db: Session, group: GroupCreate):

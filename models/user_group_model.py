@@ -5,10 +5,8 @@ from pydantic import BaseModel
 
 class UserGroup(Base):
     __tablename__ = "user_groups"
-
-    user_group_id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
-    group_id = Column(Integer, ForeignKey("groups.group_id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
+    group_id = Column(Integer, ForeignKey("groups.group_id"), primary_key=True)
 
 
 class UserGroupCreate(BaseModel):
@@ -17,9 +15,10 @@ class UserGroupCreate(BaseModel):
 
 
 class UserGroupResponse(BaseModel):
-    user_group_id: int
     user_id: int
+    username: str = None
     group_id: int
+    group_name: str = None
 
     class Config:
         orm_mode = True

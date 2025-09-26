@@ -7,7 +7,10 @@ def get_roles(db: Session):
 
 
 def get_role(db: Session, role_id: int):
-    return db.query(Role).filter(Role.role_id == role_id).first()
+    role = db.query(Role).filter(Role.role_id == role_id).first()
+    if not role:
+        raise ValueError("Không tìm thấy quyền")
+    return role
 
 
 def create_role(db: Session, role: RoleCreate):
