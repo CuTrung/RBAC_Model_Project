@@ -22,6 +22,11 @@ class UserCreate(BaseModel):
     email: str
     password: str
 
+class UserUpdate(BaseModel):
+    username: str | None = None
+    email: str | None = None
+    password: str | None = None
+
 
 class UserResponse(BaseModel):
     user_id: str

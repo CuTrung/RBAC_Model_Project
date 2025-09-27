@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from models.group_model import Group, GroupCreate
+from models.group_model import Group, GroupCreate, GroupUpdate
+from utils.string import coalesce
 from utils.validation.model import check_unique, check_exists
 from services import user_group_service
 from services import group_role_service
@@ -24,13 +25,13 @@ def create_group(db: Session, group: GroupCreate):
     db.refresh(new_group)
     return new_group
 
-def update_group(db: Session, group_id: str, updated_group: GroupCreate):
+def update_group(db: Session, group_id: str, updated_group: GroupUpdate):
     check_exists(db, Group, group_id=group_id)
     check_unique(db, Group, group_name=updated_group.group_name)
     
     group = get_group(db, group_id)
-    group.group_name = updated_group.group_name
-    group.description = updated_group.description
+    group.group_name = coalesce(updated_group.group_name, group.group_name) 
+    group.description = coalesce(updated_group.description, group.description)
     
     db.commit()
     db.refresh(group)

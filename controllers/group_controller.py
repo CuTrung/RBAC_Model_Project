@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models.group_model import GroupCreate, GroupResponse
+from models.group_model import GroupCreate, GroupResponse, GroupUpdate
 from services import group_service
 from views import group_view
 from database import get_db
@@ -36,7 +36,7 @@ def create_group(group: GroupCreate, db: Session = Depends(get_db)):
         return group_view.error_response(str(ve), 400)
     
 @router.put("/{group_id}", response_model=GroupResponse)
-def update_group(group_id: str, group: GroupCreate, db: Session = Depends(get_db)):
+def update_group(group_id: str, group: GroupUpdate, db: Session = Depends(get_db)):
     try:
         return group_view.success_response(
             group_service.update_group(db, group_id, group), 

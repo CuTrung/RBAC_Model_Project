@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from models.role_model import Role, RoleCreate
+from models.role_model import Role, RoleCreate, RoleUpdate
+from utils.string import coalesce
 from utils.validation.model import check_unique, check_exists
 from services import group_role_service
 from services import role_permission_service
@@ -25,13 +26,13 @@ def create_role(db: Session, role: RoleCreate):
     db.refresh(new_role)
     return new_role
 
-def update_role(db: Session, role_id: str, updated_role: RoleCreate):
+def update_role(db: Session, role_id: str, updated_role: RoleUpdate):
     check_exists(db, Role, role_id=role_id)
     check_unique(db, Role, role_name=updated_role.role_name)
     
     role = get_role(db, role_id)
-    role.role_name = updated_role.role_name
-    role.description = updated_role.description
+    role.role_name = coalesce(updated_role.role_name, role.role_name)
+    role.description = coalesce(updated_role.description, role.description)
     
     db.commit()
     db.refresh(role)

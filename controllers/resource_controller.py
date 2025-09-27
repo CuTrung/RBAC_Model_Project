@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models.resource_model import ResourceCreate, ResourceResponse
+from models.resource_model import ResourceCreate, ResourceResponse, ResourceUpdate
 from services import resource_service
 from views import resource_view
 from database import get_db
@@ -37,7 +37,7 @@ def create_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
     
 
 @router.put("/{resource_id}", response_model=ResourceResponse)
-def update_resource(resource_id: str, resource: ResourceCreate, db: Session = Depends(get_db)):
+def update_resource(resource_id: str, resource: ResourceUpdate, db: Session = Depends(get_db)):
     try:
         return resource_view.success_response(
             resource_service.update_resource(db, resource_id, resource), 

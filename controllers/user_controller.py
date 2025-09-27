@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models.user_model import UserCreate, UserResponse
+from models.user_model import UserCreate, UserResponse, UserUpdate
 from services import user_service
 from views import user_view
 from database import get_db
@@ -86,7 +86,7 @@ def get_user(user_id: str, db: Session = Depends(get_db)):
 
 
 @router.put("/{user_id}", response_model=UserResponse)
-def update_user(user_id: str, user: UserCreate, db: Session = Depends(get_db)):
+def update_user(user_id: str, user: UserUpdate, db: Session = Depends(get_db)):
     try:
         return user_view.success_response(
             user_service.update_user(db, user_id, user),

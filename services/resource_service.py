@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from models.resource_model import Resource, ResourceCreate
+from models.resource_model import Resource, ResourceCreate, ResourceUpdate
+from utils.string import coalesce
 from utils.validation.model import check_unique, check_exists
 from services import permission_service
 
@@ -24,13 +25,13 @@ def create_resource(db: Session, resource: ResourceCreate):
     db.refresh(new_resource)
     return new_resource
 
-def update_resource(db: Session, resource_id: str, updated_resource: ResourceCreate):
+def update_resource(db: Session, resource_id: str, updated_resource: ResourceUpdate):
     check_exists(db, Resource, resource_id=resource_id)
     check_unique(db, Resource, resource_name=updated_resource.resource_name)
     
     resource = get_resource(db, resource_id)
-    resource.resource_name = updated_resource.resource_name
-    resource.description = updated_resource.description
+    resource.resource_name = coalesce(updated_resource.resource_name, resource.resource_name)
+    resource.description = coalesce(updated_resource.description, resource.description)
     
     db.commit()
     db.refresh(resource)

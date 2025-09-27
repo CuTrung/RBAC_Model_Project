@@ -18,6 +18,10 @@ class Resource(Base):
 class ResourceCreate(BaseModel):
     resource_name: str
     description: str
+    
+class ResourceUpdate(BaseModel):
+    resource_name: str | None = None
+    description: str | None = None
 
 class ResourceResponse(BaseModel):
     resource_id: str

@@ -19,6 +19,9 @@ class RoleCreate(BaseModel):
     role_name: str
     description: str
 
+class RoleUpdate(BaseModel):
+    role_name: str | None = None
+    description: str | None = None
 
 class RoleResponse(BaseModel):
     role_id: str

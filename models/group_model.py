@@ -19,6 +19,10 @@ class GroupCreate(BaseModel):
     group_name: str
     description: str
 
+class GroupUpdate(BaseModel):
+    group_name: str | None = None
+    description: str | None = None
+
 
 class GroupResponse(BaseModel):
     group_id: str

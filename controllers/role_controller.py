@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models.role_model import RoleCreate, RoleResponse
+from models.role_model import RoleCreate, RoleResponse, RoleUpdate
 from services import role_service
 from views import role_view
 from database import get_db
@@ -37,7 +37,7 @@ def create_role(role: RoleCreate, db: Session = Depends(get_db)):
     
 
 @router.put("/{role_id}", response_model=RoleResponse)
-def update_role(role_id: str, role: RoleCreate, db: Session = Depends(get_db)):
+def update_role(role_id: str, role: RoleUpdate, db: Session = Depends(get_db)):
     try:
         return role_view.success_response(
             role_service.update_role(db, role_id, role), 

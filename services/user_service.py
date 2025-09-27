@@ -1,13 +1,13 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from models.user_model import User, UserCreate
+from models.user_model import User, UserCreate, UserUpdate
 from models.permission_model import Permission
 from models.resource_model import Resource
 from models.role_permission_model import RolePermission
 from models.user_group_model import UserGroup
 from models.group_role_model import GroupRole
 from utils.validation.model import check_unique, check_exists
-from utils.string import hash, verify
+from utils.string import coalesce, hash, verify
 from utils.jwt import create_access_token, verify_token, Depends, oauth2_scheme
 from services import user_group_service
 
@@ -35,15 +35,15 @@ def create_user(db: Session, user: UserCreate):
     return new_user
 
 
-def update_user(db: Session, user_id: str, updated_user: UserCreate):
+def update_user(db: Session, user_id: str, updated_user: UserUpdate):
     check_exists(db, User, user_id=user_id)
     check_unique(db, User, username=updated_user.username)
     check_unique(db, User, email=updated_user.email)
     
     user = get_user(db, user_id)
-    user.username = updated_user.username
-    user.email = updated_user.email
-    user.password = hash(updated_user.password)
+    user.username = coalesce(updated_user.username, user.username)
+    user.email = coalesce(updated_user.email, user.email)
+    user.password = coalesce(hash(updated_user.password) if updated_user.password else user.password)
     db.commit()
     db.refresh(user)
     return user
