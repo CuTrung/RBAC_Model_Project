@@ -10,9 +10,7 @@ class Resource(Base):
     resource_id = Column(
         String,                      
         primary_key=True,
-        default=lambda: str(uuid.uuid4()),  
-        unique=True,
-        nullable=False
+        default=lambda: str(uuid.uuid4())
     )
     resource_name = Column(String, nullable=False)
     description = Column(String)

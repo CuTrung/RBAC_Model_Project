@@ -15,15 +15,16 @@ class GetPermissionsOfRoleResponse(BaseModel):
 
     class Config:
         orm_mode = True
-        
-class AssignPermissionsForRole(BaseModel):
-    role_id: str
-    permission_ids: list[str]
+        from_attributes = True
 
-class AssignPermissionsForRoleResponse(BaseModel):
+class RolePermissionResponse(BaseModel):
     role_id: str
+    role_name: str = None
+    permission_id: str
+    permission_name: str = None
 
     class Config:
         orm_mode = True
-
+        from_attributes = True
+        
 

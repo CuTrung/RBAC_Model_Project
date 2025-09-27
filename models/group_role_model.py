@@ -6,20 +6,19 @@ from pydantic import BaseModel
 class GroupRole(Base):
     __tablename__ = "group_roles"
 
-    group_role_id = Column(Integer, primary_key=True, index=True)
-    group_id = Column(Integer, ForeignKey("groups.group_id"), nullable=False)
-    role_id = Column(Integer, ForeignKey("roles.role_id"), nullable=False)
+    group_id = Column(Integer, ForeignKey("groups.group_id"), primary_key=True)
+    role_id = Column(Integer, ForeignKey("roles.role_id"), primary_key=True)
 
 
 class GroupRoleCreate(BaseModel):
-    group_id: int
-    role_id: int
+    group_id: str
+    role_id: str
 
 
 class GroupRoleResponse(BaseModel):
-    group_id: int
+    group_id: str
     group_name: str = None
-    role_id: int
+    role_id: str
     role_name: str = None
 
     class Config:

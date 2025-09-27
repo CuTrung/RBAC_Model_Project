@@ -10,14 +10,14 @@ class UserGroup(Base):
 
 
 class UserGroupCreate(BaseModel):
-    user_id: int
-    group_id: int
+    user_id: str
+    group_id: str
 
 
 class UserGroupResponse(BaseModel):
-    user_id: int
+    user_id: str
     username: str = None
-    group_id: int
+    group_id: str
     group_name: str = None
 
     class Config:

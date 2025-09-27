@@ -1,60 +1,76 @@
 from sqlalchemy.orm import Session
-from models.role_permission_model import RolePermission, AssignPermissionsForRole
+from models.role_permission_model import RolePermission
 from models.permission_model import Permission, PermissionsOfRole
 from models.role_model import Role
-from fastapi import HTTPException, status
+from utils.validation.model import check_exists
 
 
 def get_permissions_of_role(db: Session, role_id: str):
-    permissions = (
-        db.query(Permission.permission_id, Permission.permission_name)
-        .join(RolePermission, RolePermission.permission_id == Permission.permission_id)
-        .filter(RolePermission.role_id == role_id)
-        .all()
-    )
+    check_exists(db, Role, role_id=role_id)
     
-    permissions=[PermissionsOfRole(permission_id=p[0], permission_name=p[1]) for p in permissions]
-    
-    return permissions
-
-
-def assign_permissions_for_role(db: Session, payload: AssignPermissionsForRole):
-    role_id = payload.role_id
-    permission_ids = payload.permission_ids
-    # 1. Kiểm tra role tồn tại
     role = db.query(Role).filter(Role.role_id == role_id).first()
-    if not role:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Role not found")
+    role_permissions = db.query(RolePermission).filter(RolePermission.role_id == role_id).all()
+    result = []
+    for rp in role_permissions:
+        permission = db.query(Permission).filter(Permission.permission_id == rp.permission_id).first()
+        result.append(
+            {
+                "permission_id": rp.permission_id,
+                "permission_name": permission.permission_name if role else None,
+                "role_id": rp.role_id,
+                "role_name": role.role_name if role else None,
+            }
+        )
+    return result
 
-    # Nếu mảng rỗng => xóa toàn bộ permissions của role
+
+def assign_permissions_for_role(db: Session, role_id: str, permission_ids: list[str]):
+    check_exists(db, Role, role_id=role_id)
+    
+    result = []
     if not permission_ids:
         db.query(RolePermission).filter(RolePermission.role_id == role_id).delete()
         db.commit()
-        return {"message": f"All permissions removed from role {role_id}"}
-
-    # 2. Kiểm tra tất cả permission_ids đều tồn tại
-    existing_permissions = db.query(Permission.permission_id).filter(
-        Permission.permission_id.in_(permission_ids)
-    ).all()
-    existing_permission_ids = {p[0] for p in existing_permissions}
-
-    if len(existing_permission_ids) != len(permission_ids):
-        invalid_ids = set(permission_ids) - existing_permission_ids
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid permission_ids: {list(invalid_ids)}"
-        )
-
-    # 3. Xóa toàn bộ quyền cũ của role
+        return result
+    
+    valid_permissions = db.query(Permission.permission_id).filter(Permission.permission_id.in_(permission_ids)).all()
+    valid_permission_ids = {u[0] for u in valid_permissions}
+    invalid_permissions = set(permission_ids) - valid_permission_ids
+    if invalid_permissions:
+        raise ValueError(f"Permission không tồn tại: {list(invalid_permissions)}")
+    
     db.query(RolePermission).filter(RolePermission.role_id == role_id).delete()
-
-    # 4. Thêm mới danh sách quyền
-    new_relations = [
-        RolePermission(role_id=role_id, permission_id=pid)
-        for pid in permission_ids
-    ]
-    db.add_all(new_relations)
+    for permission_id in permission_ids:
+        db.add(RolePermission(permission_id=permission_id, role_id=role_id))
     db.commit()
+    
+    role = db.query(Role).filter(Role.role_id == role_id).first()
+    role_permissions = db.query(RolePermission).filter(RolePermission.role_id == role_id).all()
+    for rp in role_permissions:
+        permission = db.query(Permission).filter(Permission.permission_id == rp.permission_id).first()
+        result.append(
+            {
+                "role_id": rp.role_id,
+                "role_name": role.role_name if role else None,
+                "permission_id": rp.permission_id,
+                "permission_name": permission.permission_name if permission else None,
+            }
+        )
+    return result
 
-    return {"message": "Permissions updated", "assigned": permission_ids}
 
+def remove_role_from_permissions(db: Session, role_id: str):
+    role_permissions = db.query(RolePermission).filter(RolePermission.role_id == role_id).all()
+    for role_permission in role_permissions:
+        db.delete(role_permission)
+    
+    db.commit()
+    return role_permissions
+
+def remove_permission_from_roles(db: Session, permission_id: str):
+    role_permissions = db.query(RolePermission).filter(RolePermission.permission_id == permission_id).all()
+    for role_permission in role_permissions:
+        db.delete(role_permission)
+    
+    db.commit()
+    return role_permissions

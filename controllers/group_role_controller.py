@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Body, status
 from sqlalchemy.orm import Session
-from models.group_role_model import GroupRoleResponse
 from services import group_role_service
 from database import get_db
 from views import group_role_view
@@ -8,12 +7,12 @@ from views import group_role_view
 router = APIRouter()
 
 
-@router.get("/{group_id}")
-def get_roles_of_group(group_id: int, db: Session = Depends(get_db)):
+@router.get("/{group_id}/roles")
+def get_roles_of_group(group_id: str, db: Session = Depends(get_db)):
     try:
-        result = group_role_service.get_roles_of_group(db, group_id)
         return group_role_view.success_response(
-            result, "Get roles of group successfully"
+            group_role_service.get_roles_of_group(db, group_id), 
+            "Lấy roles của group thành công"
         )
     except ValueError as e:
         return group_role_view.error_response(str(e), 404)
@@ -21,14 +20,16 @@ def get_roles_of_group(group_id: int, db: Session = Depends(get_db)):
 
 @router.post("/assign")
 def assign_roles_for_group(
-    group_id: int = Body(..., embed=True),
-    role_ids: list[int] = Body(..., embed=True),
+    group_id: str = Body(..., embed=True),
+    role_ids: list[str] = Body(..., embed=True),
     db: Session = Depends(get_db),
 ):
     try:
         result = group_role_service.assign_roles_for_group(db, group_id, role_ids)
-        return group_role_view.success_response(
-            result, "Assigned roles for group successfully"
-        )
-    except ValueError as e:
-        return group_role_view.error_response(str(e), 400)
+        message = "Xóa toàn bộ role khỏi group thành công" 
+        
+        if len(result) > 0:
+            message = "Gán role cho group thành công"
+        return group_role_view.success_response(result, message)
+    except ValueError as ve:
+        return group_role_view.error_response(str(ve), status.HTTP_400_BAD_REQUEST)
