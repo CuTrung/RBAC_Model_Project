@@ -1,7 +1,14 @@
+from collections import defaultdict
+from click import File
+from fastapi import UploadFile
+import pandas as pd
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from models.role_permission_model import RolePermission
-from models.permission_model import Permission, PermissionsOfRole
-from models.role_model import Role
+from models.permission_model import Permission, PermissionCreate
+from models.role_model import Role, RoleCreate
+from services import permission_service, role_service
+from utils.excel import export_excel, import_excel
 from utils.validation.model import check_exists
 
 
@@ -74,3 +81,65 @@ def remove_permission_from_roles(db: Session, permission_id: str):
     
     db.commit()
     return role_permissions
+
+
+def export_role_permissions(db: Session):
+    stmt = (
+        select(
+            Role.role_name,
+            Permission.permission_name,
+        )
+        .outerjoin(RolePermission, RolePermission.permission_id == Permission.permission_id)
+        .outerjoin(Role, Role.role_id == RolePermission.role_id)
+    )
+    data = db.execute(stmt).mappings().all()
+    return export_excel(data, filename="role_permissions.xlsx", sheet_name="RolePermissions")
+
+
+async def import_role_permissions(db: Session, file: UploadFile = File(...)):
+    role_permission_name_list = await import_excel(file)
+    role_permissions_map = defaultdict(list) 
+    
+    for rp in role_permission_name_list:
+        role_name = rp.get("role_name")
+        permission_name = rp.get("permission_name")
+
+        
+        if not role_name or not permission_name:
+            continue
+        
+        if not pd.isna(role_name): 
+            role = role_service.get_role_by_name(db, role_name)
+            if not role:
+                role = role_service.create_role(
+                    db, 
+                    RoleCreate(role_name=role_name, description=role_name + " desc")
+                )
+            role_id = role.role_id
+        
+        if not pd.isna(permission_name): 
+            permission = permission_service.get_permission_by_name(db, permission_name)
+            if not permission:
+                permission = permission_service.create_permission(
+                    db, 
+                    PermissionCreate(
+                        permission_name=permission_name, 
+                        description=permission_name + " desc", 
+                        resource_id=None
+                    )
+                )
+            permission_id = permission.permission_id
+        
+        if role_id and permission_id:
+            role_permissions_map[role_id].append(permission_id)
+            role_id = None
+            permission_id = None
+    
+
+    for role_id, permission_ids in role_permissions_map.items():
+        assign_permissions_for_role(db, role_id, permission_ids) 
+    
+    
+    return {
+        "imported_rows": sum(len(pids) for pids in role_permissions_map.values())
+    }

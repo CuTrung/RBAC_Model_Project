@@ -5,11 +5,7 @@ py -m pip install "fastapi[standard]"
 ```
 
 ```
-py -m pip install pydantic
-```
-
-```
-py -m pip install sqlalchemy
+py -m pip install [Các package cần thiết khác]
 ```
 
 # Run

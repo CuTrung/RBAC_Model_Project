@@ -49,3 +49,6 @@ def delete_role(db: Session, role_id: str):
     
     db.commit()
     return role
+
+def get_role_by_name(db: Session, role_name: str):
+    return db.query(Role).filter(Role.role_name == role_name).first()

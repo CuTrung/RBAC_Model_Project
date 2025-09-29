@@ -84,3 +84,6 @@ def remove_resource_from_permissions(db: Session, resource_id: str):
         {"resource_id": None}, synchronize_session=False
     )
     db.commit()
+
+def get_permission_by_name(db: Session, permission_name: str):
+    return db.query(Permission).filter(Permission.permission_name == permission_name).first()
