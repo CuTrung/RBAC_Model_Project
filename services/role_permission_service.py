@@ -141,5 +141,5 @@ async def import_role_permissions(db: Session, file: UploadFile = File(...)):
     
     
     return {
-        "imported_rows": sum(len(pids) for pids in role_permissions_map.values())
+        "số lượng record đã import": sum(len(pids) for pids in role_permissions_map.values())
     }
