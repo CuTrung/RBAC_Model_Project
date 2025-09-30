@@ -43,7 +43,10 @@ def update_user(db: Session, user_id: str, updated_user: UserUpdate):
     user = get_user(db, user_id)
     user.username = coalesce(updated_user.username, user.username)
     user.email = coalesce(updated_user.email, user.email)
-    user.password = coalesce(hash(updated_user.password) if updated_user.password else user.password)
+    password_hash = user.password
+    if updated_user.password:
+        password_hash = hash(updated_user.password)
+    user.password = password_hash
     db.commit()
     db.refresh(user)
     return user
